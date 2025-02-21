@@ -2,17 +2,38 @@
 
 import logo from "@/assets/images/logo-white.png";
 import userPic from "@/assets/images/profile.png";
+import {
+  ClientSafeProvider,
+  getProviders,
+  signIn,
+  useSession,
+} from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaGoogle } from "react-icons/fa";
 
 const Navbar = () => {
+  const { data: session } = useSession();
+
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [profileDropDownOpen, setProfileDropDownOpen] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
+  const [providers, setProviders] = useState<Record<
+    string,
+    ClientSafeProvider
+  > | null>(null);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const setAuthProviders = async () => {
+      const res = await getProviders();
+      if (res) setProviders(res);
+    };
+    setAuthProviders();
+  }, []);
+
+  console.log(providers);
 
   return (
     <nav className="bg-blue-700 border-b border-blue-500">
@@ -84,18 +105,25 @@ const Navbar = () => {
             </div>
           </div>
 
-          {!isLogin && (
+          {!session && (
             <div className="hidden md:block md:ml-6">
               <div className="flex items-center">
-                <button className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2">
-                  <FaGoogle className="mr-3" />
-                  <span>Login or Register</span>
-                </button>
+                {providers &&
+                  Object.values(providers).map((provider, index) => (
+                    <button
+                      key={index}
+                      className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2"
+                      onClick={() => signIn(provider.id)}
+                    >
+                      <FaGoogle className="mr-3" />
+                      <span>Login or Register</span>
+                    </button>
+                  ))}
               </div>
             </div>
           )}
 
-          {isLogin && (
+          {session && (
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 md:static md:inset-auto md:ml-6 md:pr-0">
               <Link href="/messages" className="relative group">
                 <button
@@ -213,7 +241,7 @@ const Navbar = () => {
             >
               Add Property
             </Link>
-            {!isLogin && (
+            {!session && (
               <button className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-5">
                 <FaGoogle className="mr-3" />
                 <span>Login or Register</span>
