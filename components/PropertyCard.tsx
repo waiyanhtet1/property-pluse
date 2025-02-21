@@ -1,3 +1,4 @@
+import { PropertyType } from "@/types/PropertyTypes";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -8,7 +9,11 @@ import {
   FaRulerCombined,
 } from "react-icons/fa";
 
-const PropertyCard = ({ property }) => {
+interface Props {
+  property: PropertyType;
+}
+
+const PropertyCard = ({ property }: Props) => {
   const getRateDisplay = () => {
     const { rates } = property;
     if (rates.monthly) {

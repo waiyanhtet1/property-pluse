@@ -1,7 +1,12 @@
 import PropertyCard from "@/components/PropertyCard";
-import properties from "@/properties.json";
+import { connectDB } from "@/config/dbConnect";
+import Property from "@/models/PropertyModel";
+import { PropertyType } from "@/types/PropertyTypes";
 
-const PropertiesPage = () => {
+const PropertiesPage = async () => {
+  await connectDB();
+  const properties = await Property.find().lean<PropertyType[]>();
+
   return (
     <div className="px-4 py-6">
       <div className="container-xl lg:container m-auto px-4 py-6">

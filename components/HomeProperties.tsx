@@ -1,8 +1,17 @@
-import properties from "@/properties.json";
+import { connectDB } from "@/config/dbConnect";
+import Property from "@/models/PropertyModel";
+import { PropertyType } from "@/types/PropertyTypes";
 import Link from "next/link";
 import PropertyCard from "./PropertyCard";
 
-const HomeProperties = () => {
+const HomeProperties = async () => {
+  await connectDB();
+
+  const properties = await Property.find()
+    .sort({ createdAt: -1 })
+    .limit(3)
+    .lean<PropertyType[]>();
+
   return (
     <>
       <div className="px-4 py-6">
@@ -14,7 +23,7 @@ const HomeProperties = () => {
             <p>No Properties found</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {properties.slice(0, 3).map((property) => (
+              {properties.map((property) => (
                 <PropertyCard key={property._id} property={property} />
               ))}
             </div>
