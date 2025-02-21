@@ -1,3 +1,5 @@
+import { connectDB } from "@/config/dbConnect";
+import User from "@/models/UserModel";
 import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions = {
@@ -18,15 +20,28 @@ export const authOptions = {
     // successful sing in
     async signIn({ profile }) {
       // Connect to database
+      await connectDB();
       // Check user exit
+      const isUserExit = await User.findOne({ email: profile.email });
       // if not, create user
+      if (!isUserExit) {
+        await User.create({
+          email: profile.email,
+          username: profile.name,
+          image: profile.picture,
+        });
+      }
       // return true to allow sign in
+      return true;
     },
     // session callback function modifies session object
     async session({ session }) {
       // Get user from database
+      const user = await User.findOne({ email: session.user.email });
       // assign user id from session
+      session.user.id = user._id.toString();
       // return session
+      return session;
     },
   },
 };

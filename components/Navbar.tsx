@@ -6,6 +6,7 @@ import {
   ClientSafeProvider,
   getProviders,
   signIn,
+  signOut,
   useSession,
 } from "next-auth/react";
 import Image from "next/image";
@@ -165,7 +166,9 @@ const Navbar = () => {
                     <span className="sr-only">Open user menu</span>
                     <Image
                       className="h-8 w-8 rounded-full"
-                      src={userPic}
+                      src={session.user?.image || userPic}
+                      width={50}
+                      height={50}
                       alt=""
                     />
                   </button>
@@ -203,6 +206,10 @@ const Navbar = () => {
                       role="menuitem"
                       tabIndex={-1}
                       id="user-menu-item-2"
+                      onClick={() => {
+                        setProfileDropDownOpen(false);
+                        signOut();
+                      }}
                     >
                       Sign Out
                     </button>
