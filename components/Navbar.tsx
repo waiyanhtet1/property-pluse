@@ -187,6 +187,7 @@ const Navbar = () => {
                       role="menuitem"
                       tabIndex={-1}
                       id="user-menu-item-0"
+                      onClick={() => setProfileDropDownOpen(false)}
                     >
                       Your Profile
                     </Link>
@@ -196,6 +197,7 @@ const Navbar = () => {
                       role="menuitem"
                       tabIndex={-1}
                       id="user-menu-item-2"
+                      onClick={() => setProfileDropDownOpen(false)}
                     >
                       Saved Properties
                     </Link>
